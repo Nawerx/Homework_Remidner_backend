@@ -1,16 +1,17 @@
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
+
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework_swagger.views import get_swagger_view
+
 
 from django.contrib.auth import login
 
-from .serializers import LoginSerializer, RegisterSerializer
-
+from .serializers import LoginSerializer, RegisterSerializer, UserSerializer
+from .models import User, Task
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
-
 
 
 class UserRegisterView(APIView):
@@ -58,4 +59,5 @@ class UserLoginView(APIView):
             user = serializer.check_user(request.data)
             login(request, user)
             return Response(serializer.data, status=status.HTTP_200_OK)
+
 
