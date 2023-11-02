@@ -3,11 +3,11 @@ from rest_framework.generics import ListAPIView
 
 from rest_framework.response import Response
 from rest_framework import status
-
+from rest_framework.viewsets import ModelViewSet
 
 from django.contrib.auth import login
 
-from .serializers import LoginSerializer, RegisterSerializer, UserSerializer
+from .serializers import LoginSerializer, RegisterSerializer, UserSerializer, SimpleTaskSerializer
 from .models import User, Task
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -60,4 +60,16 @@ class UserLoginView(APIView):
             login(request, user)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class UserViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserTasksViewSet(ModelViewSet):
+    serializer_class = SimpleTaskSerializer
+
+    def get_queryset(self):
+        author_id = self.request.parser_context.get("kwargs").get("author_pk")
+        return Task.objects.filter(author_id=author_id)
 
