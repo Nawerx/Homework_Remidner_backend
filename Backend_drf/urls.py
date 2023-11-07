@@ -1,5 +1,6 @@
-from django.urls import path, include
-from .views import UserLoginView, UserRegisterView, UserTasksViewSet, UserViewSet
+import knox.views
+from django.urls import path, include, re_path
+from .views import UserTasksViewSet, UserViewSet, UserRegisterView, UserLoginView
 from rest_framework_nested import routers
 
 router = routers.SimpleRouter()
@@ -9,8 +10,9 @@ nested_router = routers.NestedSimpleRouter(router, "users", lookup="author")
 nested_router.register(r"task", UserTasksViewSet, basename="task")
 
 urlpatterns = [
-    path("login/", UserLoginView.as_view()),
-    path("signup/", UserRegisterView.as_view()),
     path("", include(router.urls)),
     path("", include(nested_router.urls)),
+    path("signup/", UserRegisterView.as_view()),
+    path("login/", UserLoginView.as_view()),
+    path("logout/", knox.views.LogoutView.as_view())
 ]
