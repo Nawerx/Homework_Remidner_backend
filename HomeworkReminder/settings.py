@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 import os
 from dotenv import load_dotenv, find_dotenv
@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-ps$8(=2cn*)=@!9+z=(%o)502j_*gw-&vxkei00yjr(#()1ny9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'rest_framework',
     "Backend_drf.apps.BackendDrfConfig",
     'drf_yasg',
-    "corsheaders"
+    "knox",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -133,11 +134,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-                                      ],
-        'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+    'DEFAULT_AUTHENTICATION_CLASSES': ("knox.auth.TokenAuthentication",),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+
+
 
 }
 # Default primary key field type
@@ -147,3 +147,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "Backend_drf.User"
 
+REST_KNOX = {
+    "TOKEN_TTL": timedelta(hours=48)
+}
