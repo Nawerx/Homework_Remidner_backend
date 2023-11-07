@@ -37,12 +37,12 @@ class Task(models.Model):
     id = models.AutoField(primary_key=True)
 
     subject = models.CharField("subject", max_length=64, null=False)
-    deadline = models.DateField("deadline", null=False)
+    deadline = models.DateTimeField("deadline", null=False)
     task = models.TextField("task", max_length=264)
-    details = models.TextField("details", max_length=264)
+    details = models.TextField("details", max_length=264, blank=True, null=True)
     is_done = models.BooleanField("is_active", default=False)
 
-    author = models.ForeignKey(User, db_column="author_id", on_delete=models.CASCADE, related_name="posts")
+    author = models.ForeignKey(User, db_column="author_id", on_delete=models.CASCADE, related_name="tasks")
 
 
 
