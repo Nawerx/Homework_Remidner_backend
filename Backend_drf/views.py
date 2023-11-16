@@ -65,9 +65,11 @@ class UserLoginView(APIView):
 
             _, token = AuthToken.objects.create(user)
 
-            return Response({"user_info": {
+            return Response({"user": {
                                             "id": user.id,
-                                            "email": user.email
+                                            "email": user.email,
+                                            "first_name": user.first_name,
+                                            "last_name": user.last_name,
                                           },
                             "token": token
             }
