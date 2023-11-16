@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -56,10 +57,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "corsheaders.middleware.CorsMiddleware"
+
 ]
 
-CORS_ORIGIN_ALLOW_ANY = True
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",]
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOWED_ORIGIN_REGEXES = [r"^https://[a-z0-9-]+\.ngrok-free\.app$"]
 
 ROOT_URLCONF = 'HomeworkReminder.urls'
 
@@ -81,9 +90,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'HomeworkReminder.wsgi.application'
 
-
-
-# Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
