@@ -1,4 +1,5 @@
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.status import HTTP_401_UNAUTHORIZED
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -11,7 +12,7 @@ from .models import User, Task
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
-from knox.auth import AuthToken
+from knox.auth import AuthToken, TokenAuthentication
 # Create your views here.
 
 
@@ -82,9 +83,30 @@ class UserViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
+from knox.auth import TokenAuthentication
+from rest_framework.response import Response
+from rest_framework.status import HTTP_401_UNAUTHORIZED
+from knox.models import AuthToken
+
+
 class UserTasksViewSet(ModelViewSet):
     serializer_class = SimpleTaskSerializer
     permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        author_id = self.kwargs["author_pk"]
+
+        token = request.META.get('HTTP_AUTHORIZATION').split()[1][:8]
+
+        user_tokens = AuthToken.objects.filter(user_id=author_id).values_list('token_key', flat=True)
+
+        if token in user_tokens:
+            queryset = Task.objects.filter(author_id=author_id)
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({"error": "Access denied: Token does not belong to this user"},
+                            status=HTTP_401_UNAUTHORIZED)
 
     def create(self, request, *args, **kwargs):
         author_id = self.kwargs["author_pk"]
